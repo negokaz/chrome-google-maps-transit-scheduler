@@ -4,11 +4,11 @@ Chrome Extension to export transit on Google Maps to Google Calendar.
 
 ## Getting started
 
-1. Install from [Chrome Web Store ]()
+1. Install from [Chrome Web Store](https://chrome.google.com/webstore/detail/google-maps-transit-sched/bgmhgdighiicpabknccklffnlmmkfldh)
 
 ## Usage
 
-TODO
+![](doc/img/usage.svg)
 
 ## Build
 
