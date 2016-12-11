@@ -3,7 +3,7 @@
   "name": "Google Maps Transit Scheduler",
   "description": "Exports Google Maps Transit to Google Calendar",
   "version": "0.0.1",
-  "homepage_url": "https://github.com/negokaz/",
+  "homepage_url": "https://github.com/negokaz/chrome-google-maps-transit-scheduler",
   "permissions": [
     "https://www.google.com/*",
     "https://www.google.ac/*",
