@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Google Maps Transit Scheduler",
+  "description": "Exports Google Maps Transit to Google Calendar",
+  "version": "0.0.1",
+  "homepage_url": "https://github.com/negokaz/",
+  "permissions": [
+    "tabs",
+    "https://www.google.co.jp/maps/dir/*"
+  ],
+  "icons": {
+    "16": "icon/icon_16.png",
+    "32": "icon/icon_32.png",
+    "48": "icon/icon_48.png",
+    "128": "icon/icon_128.png"
+  },
+  "background": {
+		"scripts": ["js/background.js"]
+	},
+  "web_accessible_resources": [
+    "icon/event.svg"
+  ]
+}
