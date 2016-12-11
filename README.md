@@ -8,7 +8,7 @@ Chrome Extension to export transit on Google Maps to Google Calendar.
 
 ## Usage
 
-![](doc/img/usage.svg)
+![](doc/img/usage.png)
 
 ## Build
 
