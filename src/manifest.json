@@ -211,8 +211,10 @@
     "128": "icon/icon_128.png"
   },
   "background": {
-		"scripts": ["js/background.js"]
-	},
+    "scripts": [
+      "js/background.js"
+    ]
+  },
   "web_accessible_resources": [
     "icon/event.svg"
   ]
