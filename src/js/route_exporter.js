@@ -12,53 +12,57 @@ var waitUntil = function(condidate, interval, callback) {
 };
 
 var exportToCalendar = function() {
-  var q = document.querySelectorAll.bind(document);
+  var $trip = $('.trip-content');
+
   var location = function () {
-      var wp = q('.waypoint-address .first-line h2');
+      var $waypoints = $trip.find('.waypoint-address .first-line h2');
       return {
-        from: wp[0].innerText,
-        to: wp[wp.length - 1].innerText
+        from: $waypoints.filter(':first').text(),
+        to:   $waypoints.filter(':last').text()
       };
   };
+
   var details = function () {
       return encodeURIComponent(document.URL);
   };
+
   var dates = function () {
-      if (
-        q('.directions-mode-group-departure-time.time-with-period').length == 0
-        || q('.section-directions-trip-walking-duration.section-directions-trip-secondary-text span').length == 0
-      ) {
+      var $startTime = $trip.find('.directions-mode-group-departure-time.time-with-period:first');
+      var $endTime   = $trip.find('.directions-mode-group-arrival-time.time-with-period:last');
+
+      if ($startTime.length == 0 || $endTime.length == 0) {
         return "";
       }
 
-      var z = function(x) {
-          return ('00' + x).slice(-2);
+      var parseDate = function($time, baseDate) {
+        var parseTransitTime = function (timeText) {
+            return {
+              hour:    parseInt(timeText.split(':')[0], 10),
+              minutes: parseInt(timeText.split(':')[1], 10)
+            };
+        };
+        var time = parseTransitTime($time.text());
+        return new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), time.hour, time.minutes, 0, 0);
       };
-      var utcMsec = function (msec) {
-          var d = new Date(msec);
-          return d.getUTCFullYear() + z(d.getUTCMonth() + 1) + z(d.getUTCDate()) + 'T' + z(d.getUTCHours()) + z(d.getUTCMinutes()) + '00Z';
-      };
-      var parseTransitTime = function (span) {
-          var h = parseInt(span.innerText.split(':')[0], 10);
-          var m = parseInt(span.innerText.split(':')[1], 10);
-          return { hour: h, minutes: m };
-      };
-      var start = parseTransitTime(q('.directions-mode-group-departure-time.time-with-period')[0]);
-      var end = parseTransitTime(q('.directions-mode-group-arrival-time.time-with-period')[1]);
-      var duration = q('.section-directions-trip-walking-duration.section-directions-trip-secondary-text span')[1].innerText;
-      var date =
+
+      var baseDate =
         (document.URL.match(/!8j(\d+)/))
           ? new Date((parseInt(RegExp.$1) - 9 * 60 * 60) * 1000)
           : new Date();
-      var dateLabel = (function() {
-        var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        return monthNames[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear();
-      })();
-      var startMsec = Date.parse(dateLabel + ' ' + start.hour + ':' + start.minutes + ':00');
-      var endMsec = Date.parse(dateLabel + ' ' + end.hour + ':' + end.minutes + ':00');
-      if (!startMsec || !endMsec) return;
 
-      return utcMsec(startMsec) + '/' + utcMsec(endMsec);
+      var formatAsUTC = function (date) {
+          var fillZero = function(x) {
+              return ('00' + x).slice(-2);
+          };
+          return date.getUTCFullYear() +
+            fillZero(date.getUTCMonth() + 1) +
+            fillZero(date.getUTCDate()) + 'T' +
+            fillZero(date.getUTCHours()) +
+            fillZero(date.getUTCMinutes()) +
+            '00Z';
+      };
+
+      return formatAsUTC(parseDate($startTime, baseDate)) + '/' + formatAsUTC(parseDate($endTime, baseDate));
   };
 
   var dates = dates();
