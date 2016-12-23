@@ -23,7 +23,37 @@ var exportToCalendar = function() {
   };
 
   var details = function () {
-      return encodeURIComponent(document.URL);
+      var normalizeText = function(text) {
+        return text.replace(/\s+/g, " ").trim();
+      };
+      var transit = function() {
+        var transit = '↓';
+        var $directions = $trip.find('.directions-mode-group.closed');
+        for(var i = 0; i < $directions.length; i++) {
+          var $transitStops = $($directions[i]).find('.transit-stop');
+          var $transitSteps = $($directions[i]).find('.transit-logical-step-content .transit-logical-step-header');
+          for (var j = 0; j < Math.max($transitStops.length, $transitSteps.length); j++) {
+            if ($transitStops[j]) {
+              transit += '\n' + normalizeText($transitStops[j].innerText);
+            }
+            if ($transitSteps[j]) {
+              transit += '\n' + '↓ ' + normalizeText($transitSteps[j].innerText);
+            }
+          }
+        };
+        return transit;
+      };
+
+      var $waypoints = $trip.find('.waypoint');
+      if ($waypoints[0]) {
+        return     normalizeText($waypoints.filter(':first').text())
+          + '\n' + transit()
+          + '\n' + normalizeText($waypoints.filter(':last').text())
+          + '\n'
+          + '\n' + document.URL;
+      } else {
+        return document.URL;
+      }
   };
 
   var dates = function () {
@@ -54,24 +84,25 @@ var exportToCalendar = function() {
           var fillZero = function(x) {
               return ('00' + x).slice(-2);
           };
-          return date.getUTCFullYear() +
-            fillZero(date.getUTCMonth() + 1) +
-            fillZero(date.getUTCDate()) + 'T' +
-            fillZero(date.getUTCHours()) +
-            fillZero(date.getUTCMinutes()) +
-            '00Z';
+          return ""
+            + date.getUTCFullYear()
+            + fillZero(date.getUTCMonth() + 1)
+            + fillZero(date.getUTCDate()) + 'T'
+            + fillZero(date.getUTCHours())
+            + fillZero(date.getUTCMinutes())
+            + '00Z';
       };
 
       return formatAsUTC(parseDate($startTime, baseDate)) + '/' + formatAsUTC(parseDate($endTime, baseDate));
   };
 
-  var dates = dates();
   var location = location();
+  var dates = dates();
 
   window.open('http://www.google.com/calendar/event?action=TEMPLATE'
     + '&text=' + location.from + ' → ' + location.to
-    + '&details=' + details()
-    + ((dates) ? ('&dates=' + dates) : "")
+    + '&details=' + encodeURIComponent(details())
+    + (dates ? '&dates=' + dates : '')
     + '&location=' + location.to
     + '&trp=true');
 };
